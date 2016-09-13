@@ -4,7 +4,6 @@ os.path.isfile('/Users/andrewhalleran/Documents/git/bootcamp/scripts/thresholded
 def writeOutput(seq, header, outputFilename):
     with open(outputFilename, 'w') as output:
         output.write(header)
-        sequences = seq[::60]
         sequences = [seq[i:i+60] for i in range (0, len(seq), 60)]
         for entry in sequences:
             entry = entry + '\n'
@@ -113,10 +112,12 @@ def main():
 
     # Get our thresholded sequence
     thresholdedSequence = gc_map(cleanSequence, 1000, 0.45)
+    print(len(thresholdedS))
 
     # Write the sequence to a text file
     writeOutput(thresholdedSequence, headerSequence, 'thresholdedSequence.fasta')
 
+    writeOutput()
     longestORF = identifyORF(cleanSequence)
     print(cleanSequence[0:1000])
     print('Longest ORF', longestORF)

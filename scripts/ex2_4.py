@@ -1,8 +1,7 @@
 import re
-from operator import itemgetter
 
 def identifyORF(sequence):
-    """Doc string here... fill me out"""
+    """This function returns the five longest ORFs of a given DNA sequence."""
     starts = []
     stops = []
 
@@ -19,9 +18,10 @@ def identifyORF(sequence):
     for match in re.finditer('TAA', sequence):
         stops.append(match.start())
 
-
+    # Sort the starts and stops by index of occurence
     starts.sort()
     stops.sort()
+
     # Let's find some ORFs!
     matchingPairs = []
     for i, x in enumerate(starts):
@@ -33,8 +33,7 @@ def identifyORF(sequence):
                 matchingPairs.append(toAppend)
                 break
 
-
-    # Now, are they actually valid?
+    # Check to see if the pairs are three amino acids apart, and calculate length
     validatedPairs = []
     for i, x in enumerate(matchingPairs):
         ORFLength = x[1] - x[0]
@@ -44,7 +43,7 @@ def identifyORF(sequence):
         else:
             pass
 
-    # Can we sort things based on their length
+    # This part of the code sorts the ORFs based on their lengths
     largestORF = []
     currentMax = 0
     for i,x in enumerate(validatedPairs):
@@ -53,16 +52,17 @@ def identifyORF(sequence):
             currentMax = x[2]
         else:
             pass
-    print(largestORF, 'test')
+
+    # Create a list of the five largest ORFs to return
     largestFiveORFS = list()
     largestFiveORFS.append(sequence[largestORF[0][0]:largestORF[0][1]])
     largestFiveORFS.append(sequence[largestORF[1][0]:largestORF[1][1]])
     largestFiveORFS.append(sequence[largestORF[2][0]:largestORF[2][1]])
     largestFiveORFS.append(sequence[largestORF[3][0]:largestORF[3][1]])
     largestFiveORFS.append(sequence[largestORF[4][0]:largestORF[4][1]])
-    #return(sequence[largestORF[0][0]:largestORF[0][1]])
+
     return(largestFiveORFS)
-    
+
 def main():
     """Executes the main instructions of the program."""
 
