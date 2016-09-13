@@ -10,8 +10,8 @@ data = np.loadtxt('../data/retina_spikes.csv', skiprows=2, delimiter=',')
 t = data[:,0]
 V = data[:,1]
 plt.plot(t, V)
-#plt.xlabel('t')
-#plt.ylabel('V')
+plt.xlabel("t (ms)")
+plt.ylabel("V (µV)")
 
 plt.xlim(1395, 1400)
 plt.show()
