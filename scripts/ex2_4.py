@@ -1,4 +1,6 @@
 import re
+from operator import itemgetter
+
 def identifyORF(sequence):
     """Doc string here... fill me out"""
     starts = []
@@ -18,25 +20,65 @@ def identifyORF(sequence):
         stops.append(match.start())
 
 
-"""
-find each occurence of ATG, append that index to a list of "starts"
+    starts.sort()
+    stops.sort()
+    # Let's find some ORFs!
+    matchingPairs = []
+    for i, x in enumerate(starts):
+        for y, z in enumerate(stops):
+            if x > z:
+                pass
+            elif (x-z)%3 == 0:
+                toAppend = (x,z)
+                matchingPairs.append(toAppend)
+                break
 
-find each occurence of TGA, TAG or TAA (treat them identically), append that index to a list of "stops"
 
-Check to find all ORFs
+    # Now, are they actually valid?
+    validatedPairs = []
+    for i, x in enumerate(matchingPairs):
+        ORFLength = x[1] - x[0]
+        if ORFLength % 3 == 0:
+            tupleToAppend = (x[0], x[1], ORFLength+3)
+            validatedPairs.append(tupleToAppend)
+        else:
+            pass
 
-So, pop the first entry of the ATG
-pop the first stop
+    # Can we sort things based on their length
+    largestORF = []
+    currentMax = 0
+    for i,x in enumerate(validatedPairs):
+        if x[2] > currentMax:
+            largestORF.insert(0, x)
+            currentMax = x[2]
+        else:
+            pass
+    print(largestORF, 'test')
+    largestFiveORFS = list()
+    largestFiveORFS.append(sequence[largestORF[0][0]:largestORF[0][1]])
+    largestFiveORFS.append(sequence[largestORF[1][0]:largestORF[1][1]])
+    largestFiveORFS.append(sequence[largestORF[2][0]:largestORF[2][1]])
+    largestFiveORFS.append(sequence[largestORF[3][0]:largestORF[3][1]])
+    largestFiveORFS.append(sequence[largestORF[4][0]:largestORF[4][1]])
+    #return(sequence[largestORF[0][0]:largestORF[0][1]])
+    return(largestFiveORFS)
+    
+def main():
+    """Executes the main instructions of the program."""
 
-If the first stop follows the ATG, assign those to a pair
-Check if the pair is valid (aka the distance between the indices is a multiple of three)
-if it is, add the pair and the distance between them to a list of things
+    with open('/Users/andrewhalleran/Documents/git/bootcamp/data/salmonella_spi1_region.fna', 'r') as inputFile:
+        sequence = inputFile.readlines()
 
-Then, how are we storing this list of things? Actually. Key being the distance and then
-the positions between the value wouldn't be bad.
+    # Remove the first entry
+    headerSequence = sequence.pop(0)
 
-Then, search for the largest Key
-Get it's value
+    # Join the sequence stored in our list
+    strSequence = ''.join(sequence)
 
-def dnaToProtein(DNASequence):
-    pass"""
+    # Get rid of the new line characters by replacing them with empty
+    cleanSequence = strSequence.replace('\n', '')
+
+    ORF = identifyORF(cleanSequence)
+    print('Longest ORF', ORF)
+
+main()
