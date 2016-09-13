@@ -1,58 +1,11 @@
-"""
-Useful bioinformatics dictionaries.
-"""
-
-aa = {'A': 'Ala',
-      'R': 'Arg',
-      'N': 'Asn',
-      'D': 'Asp',
-      'C': 'Cys',
-      'Q': 'Gln',
-      'E': 'Glu',
-      'G': 'Gly',
-      'H': 'His',
-      'I': 'Ile',
-      'L': 'Leu',
-      'K': 'Lys',
-      'M': 'Met',
-      'F': 'Phe',
-      'P': 'Pro',
-      'S': 'Ser',
-      'T': 'Thr',
-      'W': 'Trp',
-      'Y': 'Tyr',
-      'V': 'Val'}
-
-# The set of DNA bases
-bases = ['T', 'C', 'A', 'G']
-
-# Build list of codons
-codon_list = []
-for first_base in bases:
-    for second_base in bases:
-        for third_base in bases:
-            codon_list += [first_base + second_base + third_base]
-
-# The amino acids that are coded for (* = STOP codon)
-amino_acids = 'FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG'
-
-# Build dictionary from tuple of 2-tuples (technically an iterator, but it works)
-codons = dict(zip(codon_list, amino_acids))
-
-del codon_list
-del amino_acids
-del bases
-del first_base
-del second_base
-del third_base
-
+import bioinfo_dicts
 
 def translate(seq):
     sequences = [seq[i:i+3] for i in range (0, len(seq), 3)]
     print(sequences)
     proteinSequence = []
     for i, x in enumerate(sequences):
-        proteinSequence.append(codons[x])
+        proteinSequence.append(biodict_info.codons[x])
     outputString = ''.join(proteinSequence)
 
     return outputString
