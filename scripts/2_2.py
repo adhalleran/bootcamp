@@ -40,6 +40,61 @@ def gc_map(seq, block_size, gc_thresh):
     outputString = ''.join(toOutput)
     return outputString
 
+import re
+from operator import itemgetter
+
+def identifyORF(sequence):
+    """Doc string here... fill me out"""
+    starts = []
+    stops = []
+
+    # Find all occurences of the starts and stops and add them to an index
+    for match in re.finditer('ATG', sequence):
+        starts.append(match.start())
+
+    for match in re.finditer('TGA', sequence):
+        stops.append(match.start())
+
+    for match in re.finditer('TAG', sequence):
+        stops.append(match.start())
+
+    for match in re.finditer('TAA', sequence):
+        stops.append(match.start())
+
+    starts.sort()
+    stops.sort()
+    # Let's find some ORFs!
+    matchingPairs = []
+    for i, x in enumerate(starts):
+        for y, z in enumerate(stops):
+            if x > z:
+                pass
+            elif (x-z)%3 == 0:
+                toAppend = (x,z)
+                matchingPairs.append(toAppend)
+                break
+
+    # Now, are they actually valid?
+    validatedPairs = []
+    for i, x in enumerate(matchingPairs):
+        ORFLength = x[1] - x[0]
+        if ORFLength % 3 == 0:
+            tupleToAppend = (x[0], x[1], ORFLength+3)
+            validatedPairs.append(tupleToAppend)
+        else:
+            pass
+
+    # Can we sort things based on their length
+    largestORF = []
+    currentMax = 0
+    for i,x in enumerate(validatedPairs):
+        if x[2] > currentMax:
+            largestORF.append(x)
+            currentMax = x[2]
+        else:
+            pass
+
+    print(sequence[largestORF[0][0]:largestORF[0][1]])
 
 def main():
     """Executes the main instructions of the program."""
@@ -60,6 +115,10 @@ def main():
     thresholdedSequence = gc_map(cleanSequence, 1000, 0.45)
 
     # Write the sequence to a text file
-    writeOutput(thresholdedSequence, headerSequence, 'thresholdedSequence.txt')
+    writeOutput(thresholdedSequence, headerSequence, 'thresholdedSequence.fasta')
+
+    longestORF = identifyORF(cleanSequence)
+    print(cleanSequence[0:1000])
+    print('Longest ORF', longestORF)
 
 main()
