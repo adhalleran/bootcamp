@@ -19,6 +19,7 @@ def draw_bs_reps(data, func, number=1):
 
 
 bd_1975 = np.loadtxt('../data/beak_depth_scandens_1975.csv')
+
 x_1975, y_1975 = ecdf(bd_1975)
 plt.plot(x_1975, y_1975, marker='.', linestyle='none', markersize='10',
         color='blue', label='1975')

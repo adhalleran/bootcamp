@@ -28,9 +28,9 @@ conf_int_2012 = np.percentile(bs_replicates_2012, [2.5, 97.5])
 
 print(conf_int_1975)
 print(conf_int_2012)
-#
-# def ecdf(data):
-#     return np.sort(data), np.arange(1, len(data)+1) / len(data)
+
+def ecdf(data):
+     return np.sort(data), np.arange(1, len(data)+1) / len(data)
 #
 # x_1975, y_1975 = ecdf(bd_1975)
 # x_2012, y_2012 = ecdf(bd_2012)
