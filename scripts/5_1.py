@@ -1,29 +1,50 @@
 import numpy as np
-# Our image processing tools
 import skimage.filters
 import skimage.io
 import skimage.morphology
 import skimage.exposure
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+import scipy
 sns.set()
 
-mCherry = skimage.io.imread('../data/bacterial_growth/bacillus_042.tif')
-# with sns.axes_style('dark'):
-#     skimage.io.imshow(mCherry/ mCherry.max())
+areas = []
+for image in os.listdir('../data/bacterial_growth'):
+    if '.tif' in image:
+        imageToProcess = '../data/bacterial_growth/' + image
+        print(imageToProcess)
+        threshold = 600
+        mCherry = skimage.io.imread(imageToProcess)
+        mCherry_thresh = mCherry > threshold
+        mCherry_area = mCherry_thresh.sum()
+        areas.append(mCherry_area)
+    else:
+        pass
 
-threshold = 600
+# Convert to an array
+areas = np.array(areas)
 
-mCherry_thresh = mCherry > threshold
+# Convert time to hours and create an array
+t = np.arange(len(areas)) * 0.25
 
-mCherry_area = mCherry_thresh.sum()
-print(mCherry_area)
+def growth(t, log_b_0, log_tau):
+    """Growth function using exponentials."""
+    return np.exp(log_b_0) * np.exp(t / np.exp(log_tau))
 
-# Add a 10um scale bar (155 * pixel width = 10um).
-# mCherry_thresh[800:810, 400:410+155] = 1
+logP, _ = scipy.optimize.curve_fit(growth, t, areas, p0=None)
 
-with sns.axes_style('dark'):
-    skimage.io.imshow(mCherry_thresh / mCherry_thresh.max(), cmap=plt.cm.viridis)
+print(*tuple(np.exp(logP)))
+print('R (square microns) = ', np.exp(logP)[0])
+print('T (hours)= ', np.exp(logP)[1])
 
-# hist_mCherry, bins_mCherry = skimage.exposure.histogram(mCherry)
-# plt.fill_between(bins_mCherry, hist_mCherry, alpha = 0.5)
+# Get smooth values
+t_smooth = np.linspace(0, t.max(), 100)
+y_smooth = growth(t_smooth, *tuple(logP))
+
+# Make smooth plot and plot data
+plt.plot(t_smooth, y_smooth, marker='None', linestyle='-', color='gray')
+plt.plot(t, areas, marker='.', linestyle='', markersize=10)
+plt.xlabel('Time (hours)')
+plt.ylabel('Area (pixels$^2$)')
+plt.title('Exponential growth')
